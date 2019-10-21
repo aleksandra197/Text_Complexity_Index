@@ -3,6 +3,8 @@
 #include <ctype.h>
 #include <math.h>
 
-int main(int argc, char *argv[])
+int main()
 {
+   printf("Text complexity index calculator");
+   return 0;
 }
