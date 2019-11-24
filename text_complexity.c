@@ -96,7 +96,8 @@ int main()
      split_text_into_words(text);
      split_text_into_sentences(text);
      break;
-   case 2: break;
+   case 2:
+        break;
 }
 return 0;
 }
