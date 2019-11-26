@@ -137,7 +137,7 @@ float *punction_marks(sentences s)
         for (j=0;j<strlen(s.sentences_array[i]);j++)
         {
             if(s.sentences_array[i][j]==',' || s.sentences_array[i][j]==';' || s.sentences_array[i][j]==':'
-                || s.sentences_array[i][j]=='-' || s.sentences_array[i][j]=='"' || s.sentences_array[i][j]=='...'
+                || s.sentences_array[i][j]=='-' || s.sentences_array[i][j]=='"'
                  || s.sentences_array[i][j]=='(' || s.sentences_array[i][j]==')')
                 sum++;
         }
@@ -297,30 +297,26 @@ int main()
    sentences s1;
    words w1;
    float text_complexity_index;
-   text=read_file(filename);
-   s1=split_text_into_sentences(text);
-   w1=split_text_into_words(text);
-   text_complexity_index=complexity_index(s1,w1);
-   printf("%f",text_complexity_index);
 
-   //printf("Witamy w programie Skladniowiec!\n");
-   //printf("Z jakiego trybu programu chcesz skorzystac?\n");
-   //printf("1:Standardowy\n");
-   //printf("2:Porownywanie\n");
-   //scanf ("%d", &x);
+   printf("Witamy w programie Skladniowiec!\n");
+   printf("Z jakiego trybu programu chcesz skorzystac?\n");
+   printf("1:Standardowy\n");
+   printf("2:Porownywanie\n");
+   scanf ("%d", &x);
 
-   //switch (x) {
-     //case 1:
-     //text=read_file(filename);
-     //printf("\nWczytany tekst:\n");
-     //printf("%s\n", text);
-     //split_text_into_words(text);
-     //split_text_into_sentences(text);
-     //break;
-   //case 2:
-        //break;
-//}
-//return 0;
+   switch (x) {
+     case 1:
+     text=read_file(filename);
+     text=read_file(filename);
+     s1=split_text_into_sentences(text);
+     w1=split_text_into_words(text);
+     text_complexity_index=complexity_index(s1,w1);
+     printf("Indeks wynosi : %.2f",text_complexity_index);
+     break;
+   case 2:
+        break;
+}
+return 0;
 
 
 }
