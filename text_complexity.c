@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 
+
 typedef struct
 {
     char **words_array;
@@ -317,8 +318,6 @@ int main()
         break;
 }
 return 0;
-
-
 }
 
 
