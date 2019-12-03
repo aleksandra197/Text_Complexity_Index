@@ -3,7 +3,8 @@
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
-
+#define N 5
+#define M 100
 
 typedef struct
 {
@@ -19,27 +20,31 @@ typedef struct
 }sentences;
 
 
+
 char* read_file(char filename[])
 {
-  //char filename[100];
-  //printf("Wczytaj plik z tekstem:\n");
-  //scanf("%s", filename);
+
   char *text = NULL;
   size_t size = 0;
   FILE *fp = fopen(filename, "r");
   if(fp==NULL)
   {
-   printf("Plik nie istnieje!");
+   printf("\nNie znaleziono pliku.\n");
    exit(1);
   }
-  fseek(fp, 0, SEEK_END);
-  size = ftell(fp);
-  rewind(fp);
-  text = malloc((size + 1) * sizeof(*text));
-  fread(text, size, 1, fp);
-  text[size] = '\0';
+  else{
+      printf("Wczytanie pliku powiodlo sie! \n");
+      fseek(fp, 0, SEEK_END);
+      size = ftell(fp);
+      rewind(fp);
+      text = malloc((size + 1) * sizeof(*text));
+      fread(text, size, 1, fp);
+      text[size] = '\0';
+  }
+
   return text;
 }
+
 
 sentences split_text_into_sentences(char *some_text)
 {
@@ -61,13 +66,12 @@ sentences split_text_into_sentences(char *some_text)
     res[index]=NULL;
     free(command);
 
-//    for(int j=0;j<index;j++){
-//      printf("%s\n\n",res[j]);
-//    }
 s.sentences_array=res;
 s.n=index;
 return s;
 }
+
+
 
 words split_text_into_words(char *some_text)
 {
@@ -89,9 +93,6 @@ words split_text_into_words(char *some_text)
     res[index]=NULL;
     free(command);
 
-//    for(int j=0;j<index;j++){
-//      printf("%s\n",res[j]);
-//    }
 w.words_array=res;
 w.n=index;
 return w;
@@ -244,80 +245,197 @@ float skewness(float *array,int n)
     return skew;
 }
 
-float complexity_index(sentences s, words w)
+float lexical_complexity(words w)
+{
+    float *arr_words=chars_in_words(w);
+
+    float words_avg= average(arr_words,w.n);
+    float words_median = median(arr_words,w.n);
+    float words_sd = standard_deviation(arr_words,w.n);
+    float words_max = max(arr_words,w.n);
+    float lexical= 4*words_avg+words_sd/words_avg+words_max/4;
+    float lexical_complexity_index;
+
+    if(words_avg>1.2*words_median)
+        lexical_complexity_index=1.1*lexical;
+    else
+        lexical_complexity_index=lexical;
+
+    return lexical_complexity_index;
+
+}
+
+float syntax_complexity(sentences s)
 {
     float *arr_sentences=number_of_words(s);
-    float *arr_words=chars_in_words(w);
     float *arr_punctation=punction_marks(s);
 
     float sentences_avg = average(arr_sentences,s.n);
     float sentences_median = median(arr_sentences,s.n);
     float sentences_sd = standard_deviation(arr_sentences,s.n);
     float sentences_max = max(arr_sentences,s.n);
-
-    float words_avg= average(arr_words,w.n);
-    float words_median = median(arr_words,w.n);
-    float words_sd = standard_deviation(arr_words,w.n);
-    float words_max = max(arr_words,w.n);
+    float sentences_min = min(arr_sentences,s.n);
 
     float punctation_avg= average(arr_punctation,s.n);
     float punctation_median = median(arr_punctation,s.n);
     float punctation_max = max(arr_punctation,s.n);
 
     float syntax= 4*sentences_avg+(sentences_sd/sentences_avg)+sentences_max/8+2*punctation_avg+punctation_max/2;
-    float lexical= 4*words_avg+words_sd/words_avg+words_max/4;
     float syntax_complexity_index;
-    float lexical_complexity_index;
-    float text_complexity_index;
 
     if(sentences_avg>1.2*sentences_median && punctation_avg>1.2*punctation_median)
-        {syntax_complexity_index=1,1*syntax;}
-        else
+        syntax_complexity_index=1,1*syntax;
+    else
         {if(sentences_avg>1.2*sentences_median || punctation_avg>1.2*punctation_median)
         syntax_complexity_index=1.05*syntax;
         else
           syntax_complexity_index=syntax;
         }
-    if(words_avg>1.2*words_median)
-        lexical_complexity_index=1.1*lexical;
-    else
-        lexical_complexity_index=lexical;
 
-    text_complexity_index=syntax_complexity_index+lexical_complexity_index;
+    return syntax_complexity_index;
+}
 
+float complexity_index(sentences s, words w)
+{
+    float syntax_complexity_index= syntax_complexity(s);
+    float lexical_complexity_index= lexical_complexity(w);
+    float text_complexity_index=syntax_complexity_index+lexical_complexity_index;
     return text_complexity_index;
 }
 
+float* xnorm(float *array,int n)
+{
+    int i;
+    float maximum=max(array,n);
+    float minimum=min(array,n);
+    float *norm_array=malloc(sizeof(float) * n);
+
+    for(i=0;i<n;i++)
+    {
+        norm_array[i]=(array[i]-minimum)/(maximum-minimum);
+    }
+
+    return norm_array;
+}
+
+
+void compare_texts(char *some_text)
+{
+   float *norm_array;
+   float text_complexity_index;
+   int i,j;
+   int index=0;
+   char **res=NULL;
+   char *command= malloc(strlen(some_text)+1);
+   strcpy(command, some_text);
+   char *tok = strtok(command, "---");
+   while(tok!=NULL) {
+        res = realloc(res, sizeof(char*)*(index+1));
+        char *dup = malloc(strlen(tok)+1);
+        strcpy(dup, tok);
+        res[index++] = dup;
+        tok = strtok(NULL, "---");
+    }
+
+    res = realloc(res, sizeof(char)*(index+1));
+    res[index]=NULL;
+    free(command);
+    float *arr=malloc(sizeof(float) * index);
+
+
+    for(i=0;i<index;i++)
+    {
+
+         arr[i]=complexity_index(split_text_into_sentences(res[i]),split_text_into_words(res[i]));
+    }
+
+
+    norm_array=xnorm(arr,index);
+
+    int *text_number;
+
+    for(j = 1; j < index; j++)
+    {
+        if(norm_array[text_number[j - 1]] < norm_array[text_number[j]])
+        {
+            int temp = text_number[j];
+            text_number[j] = text_number[j - 1];
+            text_number[j - 1] = temp;
+        }
+    }
+
+        printf("\n\ndata\tindex\n");
+        for(i=0;i<index;i++)
+        {
+        printf("%f\t%d\n", norm_array[i], text_number[i]);
+        }
+
+}
 
 
 int main()
 {
-   int x;
+   int x,y;
    char* text;
-   char filename[] = "text.txt";
+   char filename[M];
+   float text_complexity_index;
    sentences s1;
    words w1;
-   float text_complexity_index;
-
    printf("Witamy w programie Skladniowiec!\n");
-   printf("Z jakiego trybu programu chcesz skorzystac?\n");
-   printf("1:Standardowy\n");
-   printf("2:Porownywanie\n");
-   scanf ("%d", &x);
-
+   analyze:
+       printf("Z jakiego trybu programu chcesz skorzystac?\n");
+       printf("1:Standardowy\n");
+       printf("2:Porownywanie\n");
+       scanf ("%d", &x);
+       printf("Wczytaj plik z tekstem. Powinien byc zapisany w formacie .txt\n");
+       printf("Test moze byc w dowolnym jezyku opartym na alfabecie lacinskim.\n");
+       printf("Zaklada sie, ze tekst jest napisany zgodnie z regulami danego jezyka.\nNazwa pliku: ");
+       scanf ("%s", &filename);
    switch (x) {
      case 1:
-     text=read_file(filename);
-     text=read_file(filename);
-     s1=split_text_into_sentences(text);
-     w1=split_text_into_words(text);
-     text_complexity_index=complexity_index(s1,w1);
-     printf("Indeks wynosi : %.2f",text_complexity_index);
+         text=read_file(filename);
+         s1=split_text_into_sentences(text);
+         w1=split_text_into_words(text);
+         text_complexity_index=complexity_index(s1,w1);
+         printf("---");
+         printf("\nStatystyki dla ilosci wyrazow w zdaniu: \n");
+         printf("Srednia arytmetyczna: %.2f\n", average(number_of_words(s1),s1.n)  );
+         printf("Mediana: %.2f\n", median(number_of_words(s1),s1.n)  );
+         printf("Odchylenie standardowe: %.2f\n", standard_deviation(number_of_words(s1),s1.n)  );
+         printf("Max: %.2f\n", max(number_of_words(s1),s1.n)  );
+         printf("Min: %.2f\n", min(number_of_words(s1),s1.n)  );
+         printf("Wartosc indeksu zlozonosci skladniowej %.2f \n", syntax_complexity(s1));
+         printf("---");
+         printf("\nStatystyki dla ilosci liter w wyrazach: \n");
+         printf("Srednia: %.2f\n", average(chars_in_words(w1),w1.n)  );
+         printf("Mediana: %.2f\n", median(chars_in_words(w1),w1.n)  );
+         printf("Odchylenie standardowe: %.2f\n", standard_deviation(chars_in_words(w1),w1.n));
+         printf("Max: %.2f\n", max(chars_in_words(w1),w1.n)  );
+         printf("Min: %.2f\n", min(chars_in_words(w1),w1.n)  );
+         printf("Wartosc indeksu zlozonosci leksykalnej %.2f \n", lexical_complexity(w1));
+         printf("---");
+         printf("\nWartosc indeksu ogolnej zlozonosci tekstu wynosi : %.2f\n",text_complexity_index);
+         printf("---");
      break;
    case 2:
+       text=read_file(filename);
+       compare_texts(text);
         break;
+
 }
+    printf("\nCzy chcesz:\n");
+    printf("1. Przeanalizowac kolejny tekst: \n");
+    printf("2. Zakonczyc\n");
+    scanf ("%d", &y);
+    switch (y) {
+     case 1:
+         goto analyze;
+    case 2:
+        exit(1);
+    }
 return 0;
+
+
 }
 
 
