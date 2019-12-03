@@ -19,7 +19,8 @@ typedef struct
 
 }sentences;
 
-
+sentences *s_array;
+words *w_array;
 
 char* read_file(char filename[])
 {
@@ -318,57 +319,89 @@ float* xnorm(float *array,int n)
     return norm_array;
 }
 
+int my_compare (const void * a, const void * b)
+{
+    float _a = *(float*)a;
+    float _b = *(float*)b;
+    if(_a > _b) return -1;
+    else if(_a == _b) return 0;
+    else return 1;
+}
+
+
+
 
 void compare_texts(char *some_text)
 {
-   float *norm_array;
+   float *norm_index_array;
+   float *norm_syn_array;
+   float *norm_lex_array;
    float text_complexity_index;
    int i,j;
    int index=0;
    char **res=NULL;
    char *command= malloc(strlen(some_text)+1);
    strcpy(command, some_text);
-   char *tok = strtok(command, "---");
+   char *tok = strtok(command, "#");
    while(tok!=NULL) {
         res = realloc(res, sizeof(char*)*(index+1));
         char *dup = malloc(strlen(tok)+1);
         strcpy(dup, tok);
         res[index++] = dup;
-        tok = strtok(NULL, "---");
+        tok = strtok(NULL, "#");
     }
 
     res = realloc(res, sizeof(char)*(index+1));
     res[index]=NULL;
     free(command);
-    float *arr=malloc(sizeof(float) * index);
+    float *index_arr=malloc(sizeof(float) * index);
+    float *lex_arr=malloc(sizeof(float) * index);
+    float *syn_arr=malloc(sizeof(float) * index);
+    s_array = (sentences*) malloc(index * sizeof(sentences));
+    w_array = (words*) malloc(index * sizeof(words));
 
 
     for(i=0;i<index;i++)
     {
-
-         arr[i]=complexity_index(split_text_into_sentences(res[i]),split_text_into_words(res[i]));
+         s_array[i]=split_text_into_sentences(res[i]);
+         w_array[i]=split_text_into_words(res[i]);
+         lex_arr[i]=lexical_complexity(w_array[i]);
+         syn_arr[i]=syntax_complexity(s_array[i]);
+         index_arr[i]=complexity_index(s_array[i],w_array[i]);
     }
 
+    norm_index_array=xnorm(index_arr,index);
+    norm_lex_array=xnorm(lex_arr,index);
+    norm_syn_array=xnorm(syn_arr,index);
 
-    norm_array=xnorm(arr,index);
+    int * idx = malloc(index * sizeof(int));
+    float *base_arr = malloc(sizeof(float) * index);
+    for (i = 0; i < index; i++) {
+        base_arr[i] = norm_index_array[i];
+        idx[i] = i;
+    }
+    qsort(idx, index, sizeof(int),my_compare);
+    free(base_arr); base_arr = NULL;
 
-    int *text_number;
 
-    for(j = 1; j < index; j++)
+    for(i=0;i<index;i++)
     {
-        if(norm_array[text_number[j - 1]] < norm_array[text_number[j]])
+        printf("\n---\n");
+        printf("Miejsce %d - teskt nr %d:\n",i+1,idx[i]+1);
+        printf("Ekstrakt:");
+        for(j=0;j<N;j++)
         {
-            int temp = text_number[j];
-            text_number[j] = text_number[j - 1];
-            text_number[j - 1] = temp;
+            printf("%s ",w_array[idx[i]].words_array[j]);
         }
-    }
+        printf("...");
+        printf("\nIndeks ogolnej zlozonosci tekstowej: %.2f",index_arr[idx[i]]);
+        printf("\nZnormalizowany indeks ogolnej zlozonosci tekstowej: %.2f",norm_index_array[idx[i]]);
+        printf("\nIndeks zlozonosci leksykalnej: %.2f",lex_arr[idx[i]]);
+        printf("\nZnormalizowany indeks zlozonosci leksykalnej: %.2f",norm_lex_array[idx[i]]);
+        printf("\nIndeks zlozonosci skladniowej: %.2f",syn_arr[idx[i]]);
+        printf("\nZnormalizowany indeks zlozonosci skladniowej: %.2f",norm_syn_array[idx[i]]);
 
-        printf("\n\ndata\tindex\n");
-        for(i=0;i<index;i++)
-        {
-        printf("%f\t%d\n", norm_array[i], text_number[i]);
-        }
+    }
 
 }
 
@@ -423,7 +456,7 @@ int main()
         break;
 
 }
-    printf("\nCzy chcesz:\n");
+    printf("\n\nCzy chcesz:\n");
     printf("1. Przeanalizowac kolejny tekst: \n");
     printf("2. Zakonczyc\n");
     scanf ("%d", &y);
@@ -433,19 +466,9 @@ int main()
     case 2:
         exit(1);
     }
+
+
 return 0;
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
