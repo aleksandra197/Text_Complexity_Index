@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
+#include <conio.h>
 #define N 5
 #define M 100
 
@@ -34,7 +35,7 @@ char* read_file(char filename[])
    exit(1);
   }
   else{
-      printf("Wczytanie pliku powiodlo sie! \n");
+      printf("\nWczytanie pliku powiodlo sie! \n");
       fseek(fp, 0, SEEK_END);
       size = ftell(fp);
       rewind(fp);
@@ -330,9 +331,130 @@ int my_compare (const void * a, const void * b)
 
 
 
-
-void compare_texts(char *some_text)
+int main()
 {
+   int x,y,z,w,t;
+   char* text;
+   char filename[M];
+   float text_complexity_index;
+   sentences s1;
+   words w1;
+   printf("Witamy w programie Skladniowiec!\n");
+   menu1:
+       printf("Z jakiego trybu programu chcesz skorzystac?\n");
+       printf("1:Standardowy\n");
+       printf("2:Porownywanie\n");
+       scanf ("%d", &x);
+       printf("Wczytaj plik z tekstem. Powinien byc zapisany w formacie .txt\n");
+       printf("Test moze byc w dowolnym jezyku opartym na alfabecie lacinskim.\n");
+       printf("Zaklada sie, ze tekst jest napisany zgodnie z regulami danego jezyka.\nNazwa pliku: ");
+       scanf ("%s", &filename);
+   switch (x) {
+     case 1:
+    {
+
+     statistics:
+            text=read_file(filename);
+            s1=split_text_into_sentences(text);
+            w1=split_text_into_words(text);
+            text_complexity_index=complexity_index(s1,w1);
+            printf("\nTekst charakteryzuja nastepujace wartosci indeksow zlozonosci:\n");
+            printf("Wartosc indeksu zlozonosci skladniowej %.2f \n", syntax_complexity(s1));
+            printf("Wartosc indeksu zlozonosci leksykalnej %.2f \n", lexical_complexity(w1));
+            printf("Wartosc indeksu ogolnej zlozonosci tekstu wynosi : %.2f\n",text_complexity_index);
+            getch();
+            printf("---");
+            printf("\nStatystyki dla ilosci wyrazow w zdaniu: \n");
+            printf("Srednia arytmetyczna: %.2f\n", average(number_of_words(s1),s1.n)  );
+            printf("Mediana: %.2f\n", median(number_of_words(s1),s1.n)  );
+            printf("Odchylenie standardowe: %.2f\n", standard_deviation(number_of_words(s1),s1.n)  );
+            printf("Max: %.2f\n", max(number_of_words(s1),s1.n)  );
+            printf("Min: %.2f\n", min(number_of_words(s1),s1.n)  );
+            printf("Kurtoza: %.2f\n",kurtosis(number_of_words(s1),s1.n));
+            printf("Skosnocs: %.2f\n",skewness(number_of_words(s1),s1.n));
+            getch();
+            printf("---");
+            printf("\nStatystyki dla ilosci liter w wyrazach: \n");
+            printf("Srednia: %.2f\n", average(chars_in_words(w1),w1.n)  );
+            printf("Mediana: %.2f\n", median(chars_in_words(w1),w1.n)  );
+            printf("Odchylenie standardowe: %.2f\n", standard_deviation(chars_in_words(w1),w1.n));
+            printf("Max: %.2f\n", max(chars_in_words(w1),w1.n)  );
+            printf("Min: %.2f\n", min(chars_in_words(w1),w1.n)  );
+            printf("Kurtoza: %.2f\n",kurtosis(chars_in_words(w1),w1.n));
+            printf("Skosnocs: %.2f\n",skewness(chars_in_words(w1),w1.n));
+            getch();
+            printf("---");
+            printf("\nStatystyki dla znakow interpunkcyjnych: \n");
+            printf("Srednia arytmetyczna: %.2f\n", average(punction_marks(s1),s1.n)  );
+            printf("Mediana: %.2f\n", median(punction_marks(s1),s1.n)  );
+            printf("Odchylenie standardowe: %.2f\n", standard_deviation(punction_marks(s1),s1.n)  );
+            printf("Max: %.2f\n", max(punction_marks(s1),s1.n)  );
+            printf("Min: %.2f\n", min(punction_marks(s1),s1.n)  );
+            printf("Kurtoza: %.2f\n",kurtosis(punction_marks(s1),s1.n));
+            printf("Skosnocs: %.2f\n",skewness(punction_marks(s1),s1.n));
+
+           printf("\n\nCzy chcesz:\n");
+           printf("1. jeszcze raz wyswietlic statystyki opisowe?\n");
+           printf("2. przeanalizowac kolejny tekst?\n");
+           printf("3. zakonczyc?\n");
+           scanf ("%d", &y);
+           switch (y) {
+           case 1:
+           goto statistics;
+           case 2:
+           goto menu1;
+           case 3:
+            {
+                printf("\nCzy chcesz zapisac wyniki do pliku?");
+                printf("\n1. TAK");
+                printf("\n2. NIE\n");
+                scanf("%d",&t);
+                if(t==1)
+                {
+            FILE *ptr;
+            ptr = fopen("results.txt","w");
+            fprintf(ptr,"\nTekst charakteryzuja nastepujace wartosci indeksow zlozonosci:\n");
+            fprintf(ptr,"Wartosc indeksu zlozonosci skladniowej %.2f \n", syntax_complexity(s1));
+            fprintf(ptr,"Wartosc indeksu zlozonosci leksykalnej %.2f \n", lexical_complexity(w1));
+            fprintf(ptr,"Wartosc indeksu ogolnej zlozonosci tekstu wynosi : %.2f\n",text_complexity_index);
+            fprintf(ptr,"---");
+            fprintf(ptr,"\nStatystyki dla ilosci wyrazow w zdaniu: \n");
+            fprintf(ptr,"Srednia arytmetyczna: %.2f\n", average(number_of_words(s1),s1.n)  );
+            fprintf(ptr,"Mediana: %.2f\n", median(number_of_words(s1),s1.n)  );
+            fprintf(ptr,"Odchylenie standardowe: %.2f\n", standard_deviation(number_of_words(s1),s1.n)  );
+            fprintf(ptr,"Max: %.2f\n", max(number_of_words(s1),s1.n)  );
+            fprintf(ptr,"Min: %.2f\n", min(number_of_words(s1),s1.n)  );
+            fprintf(ptr,"Kurtoza: %.2f\n",kurtosis(number_of_words(s1),s1.n));
+            fprintf(ptr,"Skosnosc: %.2f\n",skewness(number_of_words(s1),s1.n));
+            fprintf(ptr,"---");
+            fprintf(ptr,"\nStatystyki dla ilosci liter w wyrazach: \n");
+            fprintf(ptr,"Srednia: %.2f\n", average(chars_in_words(w1),w1.n)  );
+            fprintf(ptr,"Mediana: %.2f\n", median(chars_in_words(w1),w1.n)  );
+            fprintf(ptr,"Odchylenie standardowe: %.2f\n", standard_deviation(chars_in_words(w1),w1.n));
+            fprintf(ptr,"Max: %.2f\n", max(chars_in_words(w1),w1.n)  );
+            fprintf(ptr,"Min: %.2f\n", min(chars_in_words(w1),w1.n)  );
+            fprintf(ptr,"Kurtoza: %.2f\n",kurtosis(chars_in_words(w1),w1.n));
+            fprintf(ptr,"Skosnosc: %.2f\n",skewness(chars_in_words(w1),w1.n));
+            fprintf(ptr,"---");
+            fprintf(ptr,"\nStatystyki dla znakow interpunkcyjnych: \n");
+            fprintf(ptr,"Srednia arytmetyczna: %.2f\n", average(punction_marks(s1),s1.n)  );
+            fprintf(ptr,"Mediana: %.2f\n", median(punction_marks(s1),s1.n)  );
+            fprintf(ptr,"Odchylenie standardowe: %.2f\n", standard_deviation(punction_marks(s1),s1.n)  );
+            fprintf(ptr,"Max: %.2f\n", max(punction_marks(s1),s1.n)  );
+            fprintf(ptr,"Min: %.2f\n", min(punction_marks(s1),s1.n)  );
+            fprintf(ptr,"Kurtoza: %.2f\n",kurtosis(punction_marks(s1),s1.n));
+            fprintf(ptr,"Skosnosc: %.2f\n",skewness(punction_marks(s1),s1.n));
+            printf("\nWyniki zostaly zapisane w pliku results.txt\n");
+
+                }
+           exit(1);
+           }
+                      }
+           break;
+   }
+   case 2:
+    {
+    text=read_file(filename);
    float *norm_index_array;
    float *norm_syn_array;
    float *norm_lex_array;
@@ -340,15 +462,15 @@ void compare_texts(char *some_text)
    int i,j;
    int index=0;
    char **res=NULL;
-   char *command= malloc(strlen(some_text)+1);
-   strcpy(command, some_text);
-   char *tok = strtok(command, "#");
+   char *command= malloc(strlen(text)+1);
+   strcpy(command, text);
+   char *tok = strtok(command, "漢");
    while(tok!=NULL) {
         res = realloc(res, sizeof(char*)*(index+1));
         char *dup = malloc(strlen(tok)+1);
         strcpy(dup, tok);
         res[index++] = dup;
-        tok = strtok(NULL, "#");
+        tok = strtok(NULL, "漢");
     }
 
     res = realloc(res, sizeof(char)*(index+1));
@@ -384,6 +506,7 @@ void compare_texts(char *some_text)
     free(base_arr); base_arr = NULL;
 
 
+
     for(i=0;i<index;i++)
     {
         printf("\n---\n");
@@ -400,75 +523,92 @@ void compare_texts(char *some_text)
         printf("\nZnormalizowany indeks zlozonosci leksykalnej: %.2f",norm_lex_array[idx[i]]);
         printf("\nIndeks zlozonosci skladniowej: %.2f",syn_arr[idx[i]]);
         printf("\nZnormalizowany indeks zlozonosci skladniowej: %.2f",norm_syn_array[idx[i]]);
-
     }
 
-}
-
-
-int main()
-{
-   int x,y;
-   char* text;
-   char filename[M];
-   float text_complexity_index;
-   sentences s1;
-   words w1;
-   printf("Witamy w programie Skladniowiec!\n");
-   analyze:
-       printf("Z jakiego trybu programu chcesz skorzystac?\n");
-       printf("1:Standardowy\n");
-       printf("2:Porownywanie\n");
-       scanf ("%d", &x);
-       printf("Wczytaj plik z tekstem. Powinien byc zapisany w formacie .txt\n");
-       printf("Test moze byc w dowolnym jezyku opartym na alfabecie lacinskim.\n");
-       printf("Zaklada sie, ze tekst jest napisany zgodnie z regulami danego jezyka.\nNazwa pliku: ");
-       scanf ("%s", &filename);
-   switch (x) {
-     case 1:
-         text=read_file(filename);
-         s1=split_text_into_sentences(text);
-         w1=split_text_into_words(text);
-         text_complexity_index=complexity_index(s1,w1);
-         printf("---");
-         printf("\nStatystyki dla ilosci wyrazow w zdaniu: \n");
-         printf("Srednia arytmetyczna: %.2f\n", average(number_of_words(s1),s1.n)  );
-         printf("Mediana: %.2f\n", median(number_of_words(s1),s1.n)  );
-         printf("Odchylenie standardowe: %.2f\n", standard_deviation(number_of_words(s1),s1.n)  );
-         printf("Max: %.2f\n", max(number_of_words(s1),s1.n)  );
-         printf("Min: %.2f\n", min(number_of_words(s1),s1.n)  );
-         printf("Wartosc indeksu zlozonosci skladniowej %.2f \n", syntax_complexity(s1));
-         printf("---");
-         printf("\nStatystyki dla ilosci liter w wyrazach: \n");
-         printf("Srednia: %.2f\n", average(chars_in_words(w1),w1.n)  );
-         printf("Mediana: %.2f\n", median(chars_in_words(w1),w1.n)  );
-         printf("Odchylenie standardowe: %.2f\n", standard_deviation(chars_in_words(w1),w1.n));
-         printf("Max: %.2f\n", max(chars_in_words(w1),w1.n)  );
-         printf("Min: %.2f\n", min(chars_in_words(w1),w1.n)  );
-         printf("Wartosc indeksu zlozonosci leksykalnej %.2f \n", lexical_complexity(w1));
-         printf("---");
-         printf("\nWartosc indeksu ogolnej zlozonosci tekstu wynosi : %.2f\n",text_complexity_index);
-         printf("---");
-     break;
-   case 2:
-       text=read_file(filename);
-       compare_texts(text);
+    menu2:
+     printf("\n\nCzy chcesz:");
+     printf("\n1. wyswietlic statystyki opisowe dla tektu o wybranym numerze?");
+     printf("\n2. przeanalizowac kolejny teskt?");
+     printf("\n3. zakonczyc dzialanie programu?\n");
+     scanf("%d",&z);
+     switch(z)
+     {
+        case 1:{
+            printf("\nPodaj numer tekstu: ");
+            scanf("%d",&w);
+            w=w-1;
+            printf("\n***Teskt nr %d***\n",w+1);
+            printf("---");
+            printf("\nStatystyki dla ilosci wyrazow w zdaniu: \n");
+            printf("Srednia arytmetyczna: %.2f\n", average(number_of_words(s_array[w]),s_array[w].n)  );
+            printf("Mediana: %.2f\n", median(number_of_words(s_array[w]),s_array[w].n)  );
+            printf("Odchylenie standardowe: %.2f\n", standard_deviation(number_of_words(s_array[w]),s_array[w].n)  );
+            printf("Max: %.2f\n", max(number_of_words(s_array[w]),s_array[w].n)  );
+            printf("Min: %.2f\n", min(number_of_words(s_array[w]),s_array[w].n)  );
+            printf("Kurtoza: %.2f\n",kurtosis(number_of_words(s_array[w]),s_array[w].n));
+            printf("Skosnosc: %.2f\n",skewness(number_of_words(s_array[w]),s_array[w].n));
+            getch();
+            printf("---");
+            printf("\nStatystyki dla ilosci liter w wyrazach: \n");
+            printf("Srednia: %.2f\n", average(chars_in_words(w_array[w]),w_array[w].n)  );
+            printf("Mediana: %.2f\n", median(chars_in_words(w_array[w]),w_array[w].n)  );
+            printf("Odchylenie standardowe: %.2f\n", standard_deviation(chars_in_words(w_array[w]),w_array[w].n));
+            printf("Max: %.2f\n", max(chars_in_words(w_array[w]),w_array[w].n)  );
+            printf("Min: %.2f\n", min(chars_in_words(w_array[w]),w_array[w].n)  );
+            printf("Kurtoza: %.2f\n",kurtosis(chars_in_words(w_array[w]),w_array[w].n));
+            printf("Skosnosc: %.2f\n",skewness(chars_in_words(w_array[w]),s_array[w].n));
+            getch();
+            printf("---");
+            printf("\nStatystyki dla ilosci znakow interpunkcyjnych: \n");
+            printf("Srednia arytmetyczna: %.2f\n", average(punction_marks(s_array[w]),s_array[w].n)  );
+            printf("Mediana: %.2f\n", median(punction_marks(s_array[w]),s_array[w].n)  );
+            printf("Odchylenie standardowe: %.2f\n", standard_deviation(punction_marks(s_array[w]),s_array[w].n)  );
+            printf("Max: %.2f\n", max(punction_marks(s_array[w]),s_array[w].n)  );
+            printf("Min: %.2f\n", min(punction_marks(s_array[w]),s_array[w].n)  );
+            printf("Kurtoza: %.2f\n",kurtosis(punction_marks(s_array[w]),s_array[w].n));
+            printf("Skosnosc: %.2\n",skewness(punction_marks(s_array[w]),s_array[w].n));
+            goto menu2;
         break;
+        }
+        case 2: goto menu1;
+        case 3:
+            {
+                printf("\nCzy chcesz zapisac wyniki do pliku?");
+                printf("\n1. TAK");
+                printf("\n2. NIE\n");
+                scanf("%d",&t);
+                if(t==1)
+                {
+                    FILE *ptr;
+                    ptr = fopen("results.txt","w");
+                    for(i=0;i<index;i++)
+                       {
+                        fprintf(ptr,"\n---\n");
+                        fprintf(ptr,"Miejsce %d - teskt nr %d:\n",i+1,idx[i]+1);
+                        fprintf(ptr,"Ekstrakt:");
+                    for(j=0;j<N;j++)
+                        {
+                        fprintf(ptr,"%s ",w_array[idx[i]].words_array[j]);
+                        }
+                        fprintf(ptr,"...");
+                    fprintf(ptr,"\nIndeks ogolnej zlozonosci tekstowej: %.2f",index_arr[idx[i]]);
+                    fprintf(ptr,"\nZnormalizowany indeks ogolnej zlozonosci tekstowej: %.2f",norm_index_array[idx[i]]);
+                    fprintf(ptr,"\nIndeks zlozonosci leksykalnej: %.2f",lex_arr[idx[i]]);
+                    fprintf(ptr,"\nZnormalizowany indeks zlozonosci leksykalnej: %.2f",norm_lex_array[idx[i]]);
+                    fprintf(ptr,"\nIndeks zlozonosci skladniowej: %.2f",syn_arr[idx[i]]);
+                    fprintf(ptr,"\nZnormalizowany indeks zlozonosci skladniowej: %.2f",norm_syn_array[idx[i]]);
+                        }
+                    printf("\nWyniki zostaly zapisane w pliku results.txt\n");
+
+                }
+                exit(2);
+            }
+
+     }
 
 }
-    printf("\n\nCzy chcesz:\n");
-    printf("1. Przeanalizowac kolejny tekst: \n");
-    printf("2. Zakonczyc\n");
-    scanf ("%d", &y);
-    switch (y) {
-     case 1:
-         goto analyze;
-    case 2:
-        exit(1);
-    }
-
 
 return 0;
 
-
+}
 }

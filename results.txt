@@ -1,0 +1,30 @@
+Wartosc indeksu zlozonosci skladniowej 52.00 
+Wartosc indeksu zlozonosci leksykalnej 27.32 
+Wartosc indeksu ogolnej zlozonosci tekstu wynosi : 79.32
+---
+Statystyki dla ilosci wyrazow w zdaniu: 
+Srednia arytmetyczna: 12.00
+Mediana: 12.00
+Odchylenie standardowe: 0.00
+Max: 12.00
+Min: 12.00
+Kurtoza: -1.#J
+Skosnosc: -1.#J
+---
+Statystyki dla ilosci liter w wyrazach: 
+Srednia: 6.00
+Mediana: 11.00
+Odchylenie standardowe: 3.40
+Max: 11.00
+Min: 1.00
+Kurtoza: 1.78
+Skosnosc: -4.42
+---
+Statystyki dla znakow interpunkcyjnych: 
+Srednia arytmetyczna: 1.00
+Mediana: 1.00
+Odchylenie standardowe: 0.00
+Max: 1.00
+Min: 1.00
+Kurtoza: -1.#J
+Skosnosc: -1.#J
