@@ -1,30 +1,31 @@
-Wartosc indeksu zlozonosci skladniowej 52.00 
-Wartosc indeksu zlozonosci leksykalnej 27.32 
-Wartosc indeksu ogolnej zlozonosci tekstu wynosi : 79.32
+
 ---
-Statystyki dla ilosci wyrazow w zdaniu: 
-Srednia arytmetyczna: 12.00
-Mediana: 12.00
-Odchylenie standardowe: 0.00
-Max: 12.00
-Min: 12.00
-Kurtoza: -1.#J
-Skosnosc: -1.#J
+Miejsce 1 - teskt nr 1:
+Fragment:
+Perhaps the immobility of the ...
+Indeks ogolnej zlozonosci tekstowej: 518.64
+Znormalizowany indeks ogolnej zlozonosci tekstowej: 1.00
+Indeks zlozonosci leksykalnej: 22.58
+Znormalizowany indeks zlozonosci leksykalnej: 1.00
+Indeks zlozonosci skladniowej: 496.06
+Znormalizowany indeks zlozonosci skladniowej: 1.00
 ---
-Statystyki dla ilosci liter w wyrazach: 
-Srednia: 6.00
-Mediana: 11.00
-Odchylenie standardowe: 3.40
-Max: 11.00
-Min: 1.00
-Kurtoza: 1.78
-Skosnosc: -4.42
+Miejsce 2 - teskt nr 3:
+Fragment:
+I am unhappy with the ...
+Indeks ogolnej zlozonosci tekstowej: 246.51
+Znormalizowany indeks ogolnej zlozonosci tekstowej: 0.00
+Indeks zlozonosci leksykalnej: 21.41
+Znormalizowany indeks zlozonosci leksykalnej: 0.58
+Indeks zlozonosci skladniowej: 225.10
+Znormalizowany indeks zlozonosci skladniowej: 0.39
 ---
-Statystyki dla znakow interpunkcyjnych: 
-Srednia arytmetyczna: 1.00
-Mediana: 1.00
-Odchylenie standardowe: 0.00
-Max: 1.00
-Min: 1.00
-Kurtoza: -1.#J
-Skosnosc: -1.#J
+Miejsce 3 - teskt nr 2:
+Fragment:
+This little piggy went to ...
+Indeks ogolnej zlozonosci tekstowej: 69.20
+Znormalizowany indeks ogolnej zlozonosci tekstowej: 0.39
+Indeks zlozonosci leksykalnej: 19.81
+Znormalizowany indeks zlozonosci leksykalnej: 0.00
+Indeks zlozonosci skladniowej: 49.39
+Znormalizowany indeks zlozonosci skladniowej: 0.00

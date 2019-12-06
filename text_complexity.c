@@ -498,27 +498,38 @@ int main()
 
     int * idx = malloc(index * sizeof(int));
     float *base_arr = malloc(sizeof(float) * index);
+
     for (i = 0; i < index; i++) {
         base_arr[i] = norm_index_array[i];
-        idx[i] = i;
     }
-    qsort(idx, index, sizeof(int),my_compare);
-    free(base_arr); base_arr = NULL;
 
+    qsort(norm_index_array, index, sizeof(int),my_compare);
 
+    for(i=0;i<index;i++)
+    {
+        for(j=0;j<index;j++)
+        {
+            if(norm_index_array[i]==base_arr[j])
+            idx[i]=j;
+        }
+
+    }
+
+    free(base_arr);
+    base_arr = NULL;
 
     for(i=0;i<index;i++)
     {
         printf("\n---\n");
         printf("Miejsce %d - teskt nr %d:\n",i+1,idx[i]+1);
-        printf("Ekstrakt:");
+        printf("Fragment:");
         for(j=0;j<N;j++)
         {
             printf("%s ",w_array[idx[i]].words_array[j]);
         }
         printf("...");
         printf("\nIndeks ogolnej zlozonosci tekstowej: %.2f",index_arr[idx[i]]);
-        printf("\nZnormalizowany indeks ogolnej zlozonosci tekstowej: %.2f",norm_index_array[idx[i]]);
+        printf("\nZnormalizowany indeks ogolnej zlozonosci tekstowej: %.2f",norm_index_array[i]);
         printf("\nIndeks zlozonosci leksykalnej: %.2f",lex_arr[idx[i]]);
         printf("\nZnormalizowany indeks zlozonosci leksykalnej: %.2f",norm_lex_array[idx[i]]);
         printf("\nIndeks zlozonosci skladniowej: %.2f",syn_arr[idx[i]]);
@@ -585,7 +596,7 @@ int main()
                        {
                         fprintf(ptr,"\n---\n");
                         fprintf(ptr,"Miejsce %d - teskt nr %d:\n",i+1,idx[i]+1);
-                        fprintf(ptr,"Ekstrakt:");
+                        fprintf(ptr,"Fragment:");
                     for(j=0;j<N;j++)
                         {
                         fprintf(ptr,"%s ",w_array[idx[i]].words_array[j]);
